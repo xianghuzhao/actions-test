@@ -9,12 +9,22 @@ jobs:
     container:
       image: sl:6
     steps:
+      - name: Install packages
+        run: yum install -y git
       - name: Download dirac-install
         run: |
           pwd
           mkdir ihepdirac && cd ihepdirac
-          wget -np -O dirac-install https://github.com/DIRACGrid/DIRAC/raw/integration/Core/scripts/dirac-install.py --no-check-certificate
+          curl -sSLfk -o dirac-install https://github.com/DIRACGrid/DIRAC/raw/integration/Core/scripts/dirac-install.py
           chmod +x dirac-install
           ./dirac-install -V IHEP
-          source bashrc
-          dirac-distribution
+      - name: dirac-distribution
+        run: |
+          pwd
+          source ihepdirac/bashrc
+          dirac-distribution -l IHEP -r v0r1 -D release
+          ls -Al release
+      - name: CVMFS
+        run: |
+          pwd
+          mkdir -p /cvmfs/dcomputing.ihep.ac.cn/dirac/IHEPDIRAC/${{ github.ref }}
