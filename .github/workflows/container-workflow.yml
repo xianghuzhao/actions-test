@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Install packages
         run: yum install -y git
-      - name: Download dirac-install
+      - name: Install DIRAC client
         run: |
           pwd
           mkdir ihepdirac && cd ihepdirac
@@ -21,6 +21,8 @@ jobs:
       - name: dirac-distribution
         run: |
           pwd
+          ls
+          ls ihepdirac
           source ihepdirac/bashrc
           dirac-distribution -l IHEP -r v0r1 -D release
           ls -Al release
