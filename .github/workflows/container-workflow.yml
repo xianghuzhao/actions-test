@@ -4,21 +4,17 @@ on: [push]
 
 jobs:
   build:
-    # Job name is Greeting
-    name: Greeting
-    # This job runs on Linux
+    name: Install IHEPDIRAC
     runs-on: self-hosted
     container:
-      image: node:10.16-jessie
+      image: sl:6
     steps:
-      # This step uses GitHub's hello-world-javascript-action: https://github.com/actions/hello-world-javascript-action
-      - name: Hello world
-        uses: actions/hello-world-javascript-action@v1
-        with:
-          who-to-greet: 'Mona the Octocat'
-        id: hello
-      # This step prints an output (time) from the previous step's action.
-      - name: Echo the greeting's time
-        run: echo 'The time was ${{ steps.hello.outputs.time }}.'
-      - name: Container OS
-        run: cat /etc/debian_version
+      - name: Download dirac-install
+        run: |
+          pwd
+          mkdir ihepdirac && cd ihepdirac
+          wget -np -O dirac-install https://github.com/DIRACGrid/DIRAC/raw/integration/Core/scripts/dirac-install.py --no-check-certificate
+          chmod +x dirac-install
+          ./dirac-install -V IHEP
+          source bashrc
+          dirac-distribution
