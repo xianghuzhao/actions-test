@@ -18,15 +18,18 @@ jobs:
           curl -sSLfk -o dirac-install https://github.com/DIRACGrid/DIRAC/raw/integration/Core/scripts/dirac-install.py
           chmod +x dirac-install
           ./dirac-install -V IHEP
+      - name: CVMFS
+        run: |
+          pwd
+          mkdir -p /cvmfs/dcomputing.ihep.ac.cn/dirac/IHEPDIRAC/${{ github.ref }}
+          ls /cvmfs/dcomputing.ihep.ac.cn/dirac/IHEPDIRAC
       - name: dirac-distribution
         run: |
           pwd
           ls
           ls ihepdirac
+          ls ihepdirac/bashrc
+          . ihepdirac/bashrc
           source ihepdirac/bashrc
           dirac-distribution -l IHEP -r v0r1 -D release
           ls -Al release
-      - name: CVMFS
-        run: |
-          pwd
-          mkdir -p /cvmfs/dcomputing.ihep.ac.cn/dirac/IHEPDIRAC/${{ github.ref }}
