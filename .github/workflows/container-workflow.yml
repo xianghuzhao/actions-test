@@ -27,11 +27,14 @@ jobs:
           cd release
           tar -cf - * | ssh -i ../key/id_rsa -o StrictHostKeyChecking=no www@dirac-code.ihep.ac.cn 'cd /home/www/temp/var/www/html/ihep/tars && tar -xvf - && ls *.tar.gz > tars.list'
       - name: CVMFS
+        env:
+          GIT_TAG: ${GITHUB_REF##*/}
         run: |
           pwd
-          mkdir -p /cvmfs/dcomputing.ihep.ac.cn/dirac/IHEPDIRAC/${{ github.ref }}
-          cd /cvmfs/dcomputing.ihep.ac.cn/dirac/IHEPDIRAC/${{ github.ref }}
+          echo "Tag: $GIT_TAG"
+          mkdir -p /cvmfs/dcomputing.ihep.ac.cn/dirac/IHEPDIRAC/${GIT_TAG}
+          cd /cvmfs/dcomputing.ihep.ac.cn/dirac/IHEPDIRAC/${GIT_TAG}
           curl -fsSLk -o dirac-install https://github.com/DIRACGrid/DIRAC/raw/integration/Core/scripts/dirac-install.py
           chmod +x dirac-install
-          ./dirac-install -V IHEP -r ${{ github.ref }}
+          ./dirac-install -V IHEP -r ${GIT_TAG}
           ls -Al
