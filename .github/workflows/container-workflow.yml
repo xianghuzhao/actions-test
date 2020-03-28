@@ -2,7 +2,7 @@ name: Container Test
 
 on:
   push:
-    tag:
+    tags:
       - v*
 
 jobs:
@@ -30,4 +30,8 @@ jobs:
         run: |
           pwd
           mkdir -p /cvmfs/dcomputing.ihep.ac.cn/dirac/IHEPDIRAC/${{ github.ref }}
-          ls -Al /cvmfs/dcomputing.ihep.ac.cn/dirac/IHEPDIRAC
+          cd /cvmfs/dcomputing.ihep.ac.cn/dirac/IHEPDIRAC/${{ github.ref }}
+          curl -fsSLk -o dirac-install https://github.com/DIRACGrid/DIRAC/raw/integration/Core/scripts/dirac-install.py
+          chmod +x dirac-install
+          ./dirac-install -V IHEP -r ${{ github.ref }}
+          ls -Al
