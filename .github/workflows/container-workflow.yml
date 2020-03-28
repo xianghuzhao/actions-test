@@ -1,6 +1,9 @@
 name: Container Test
 
-on: [push]
+on:
+  push:
+    tag:
+      - v*
 
 jobs:
   build:
