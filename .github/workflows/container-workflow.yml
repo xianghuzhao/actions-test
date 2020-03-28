@@ -36,13 +36,15 @@ jobs:
           curl -fsSLk -o dirac-install https://github.com/DIRACGrid/DIRAC/raw/integration/Core/scripts/dirac-install.py
           chmod +x dirac-install
           ./dirac-install -V IHEP -r ${GIT_TAG}
+          source bashrc
+          dirac-configure defaults-IHEP.cfg || true
       - name: Set temp data dir
         run: echo ::set-env name=DATA_DIR::$(ssh -i key/id_rsa -o StrictHostKeyChecking=no zhaoxh@lxslc601.ihep.ac.cn 'mktemp --suffix=-deploy -d')
-      - name: Prepare data files
+      - name: Upload data files
         run: |
           echo "Data dir: ${DATA_DIR}"
           tar -czf - /cvmfs/dcomputing.ihep.ac.cn/dirac/IHEPDIRAC/${GIT_TAG} | ssh -i key/id_rsa -o StrictHostKeyChecking=no zhaoxh@lxslc601.ihep.ac.cn "cat > ${DATA_DIR}/${GIT_TAG}.tar.gz"
           echo "${{ secrets.CVMFS_PASS }}" | ssh -i key/id_rsa -o StrictHostKeyChecking=no zhaoxh@lxslc601.ihep.ac.cn "cat > ${DATA_DIR}/cvmfs-pass"
-          ls -Al "${DATA_DIR}"
+          ssh -i key/id_rsa -o StrictHostKeyChecking=no zhaoxh@lxslc601.ihep.ac.cn "/cvmfs/dcomputing.ihep.ac.cn/hpc/sw/x86_64-sl6/sshpass/1.06/bin/sshpass -f ${DATA_DIR}/cvmfs-pass ssh dcomputingpub@cvmfs-stratum-zero.ihep.ac.cn ls"
 #      - name: Clean data files
 #        run: rm -rf "${DATA_DIR}"
