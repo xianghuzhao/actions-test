@@ -31,17 +31,20 @@ jobs:
           tar -cf - * | ssh -i ../key/id_rsa -o StrictHostKeyChecking=no www@dirac-code.ihep.ac.cn 'cd /home/www/temp/var/www/html/ihep/tars && tar -xvf - && ls *.tar.gz > tars.list'
       - name: Install IHEPDIRAC client
         run: |
+          pwd
           mkdir -p /cvmfs/dcomputing.ihep.ac.cn/dirac/IHEPDIRAC/${GIT_TAG}
           cd /cvmfs/dcomputing.ihep.ac.cn/dirac/IHEPDIRAC/${GIT_TAG}
           curl -fsSLk -o dirac-install https://github.com/DIRACGrid/DIRAC/raw/integration/Core/scripts/dirac-install.py
           chmod +x dirac-install
           ./dirac-install -V IHEP -r ${GIT_TAG}
-          source bashrc
+          ls -Al
+          . ./bashrc
           dirac-configure defaults-IHEP.cfg || true
       - name: Set temp data dir
         run: echo ::set-env name=DATA_DIR::$(ssh -i key/id_rsa -o StrictHostKeyChecking=no zhaoxh@lxslc601.ihep.ac.cn 'mktemp --suffix=-deploy -d')
       - name: Upload data files
         run: |
+          pwd
           echo "Data dir: ${DATA_DIR}"
           tar -czf - /cvmfs/dcomputing.ihep.ac.cn/dirac/IHEPDIRAC/${GIT_TAG} | ssh -i key/id_rsa -o StrictHostKeyChecking=no zhaoxh@lxslc601.ihep.ac.cn "cat > ${DATA_DIR}/${GIT_TAG}.tar.gz"
           echo "${{ secrets.CVMFS_PASS }}" | ssh -i key/id_rsa -o StrictHostKeyChecking=no zhaoxh@lxslc601.ihep.ac.cn "cat > ${DATA_DIR}/cvmfs-pass"
