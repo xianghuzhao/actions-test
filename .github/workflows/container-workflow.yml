@@ -11,8 +11,9 @@ jobs:
     steps:
       - name: Setup ssh key
         run: |
-          mkdir key
-          echo ${{ secrets.IHEPDIRAC_KEY }} > key/id_rsa
+          rm -rf key
+          mkdir -p key
+          echo "${{ secrets.IHEPDIRAC_KEY }}" > key/id_rsa
           chmod 400 key/id_rsa
       - name: Create IHEPDIRAC distribution
         run: |
